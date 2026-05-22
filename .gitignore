@@ -1,0 +1,14 @@
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+web/dist/
+.env
+.env.local
+api/.env
+api/storage/orders.json
+api/data/*.db
+*.log
+.DS_Store
+Thumbs.db

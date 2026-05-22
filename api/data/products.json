@@ -1,0 +1,68 @@
+[
+  {
+    "id": "geo-tangram-inicial",
+    "title": "Geometría y Tangram",
+    "level": "Inicial",
+    "age": "5 a 7 años",
+    "description": "Taller visual, manipulativo y listo para imprimir.",
+    "price": 6600,
+    "badge": "Más elegido",
+    "active": true,
+    "image": null
+  },
+  {
+    "id": "division-primaria",
+    "title": "División: repartos y estrategias",
+    "level": "Primaria",
+    "age": "2.º a 4.º grado",
+    "description": "Secuencias didácticas para construir el sentido de la división con repartos y problemas cotidianos.",
+    "price": 7200,
+    "badge": null,
+    "active": true,
+    "image": null
+  },
+  {
+    "id": "cuerpos-geom-tecnica",
+    "title": "Cuerpos geométricos en secundaria técnica",
+    "level": "Técnica",
+    "age": "1.º y 2.º año",
+    "description": "Prismas, pirámides y desarrollos planos con fichas imprimibles para taller y geometría.",
+    "price": 7800,
+    "badge": null,
+    "active": true,
+    "image": null
+  },
+  {
+    "id": "irracionales-secundaria",
+    "title": "Números irracionales",
+    "level": "Secundaria",
+    "age": "4.º año",
+    "description": "Introducción guiada a √2 y π con representaciones, estimación y ejercicios.",
+    "price": 7500,
+    "badge": null,
+    "active": true,
+    "image": null
+  },
+  {
+    "id": "taller-logico-superior",
+    "title": "Taller de Pensamiento Lógico Matemático",
+    "level": "Superior",
+    "age": "Profesorado",
+    "description": "Propuestas para formación docente: razonamiento, demostración y diseño de situaciones.",
+    "price": 8200,
+    "badge": "Formación docente",
+    "active": true,
+    "image": null
+  },
+  {
+    "id": "ia-primera-experiencia",
+    "title": "Mi primera experiencia con IA",
+    "level": "IA educativa",
+    "age": "Niños y docentes",
+    "description": "Guía amable para usar IA en el aula con ética, ejemplos y actividades seguras.",
+    "price": 6900,
+    "badge": "Nuevo",
+    "active": true,
+    "image": null
+  }
+]

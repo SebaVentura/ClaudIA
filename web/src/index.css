@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans text-claudia-ink antialiased bg-claudia-cream;
+  }
+}
+
+@layer utilities {
+  .section-anchor {
+    scroll-margin-top: 5.5rem;
+  }
+}
