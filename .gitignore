@@ -4,11 +4,17 @@ __pycache__/
 .venv/
 venv/
 web/dist/
+
+# Variables de entorno (no commitear; sí commitear *.env.example)
 .env
 .env.local
-api/.env
-api/storage/orders.json
-api/data/*.db
+server/.env
+web/.env
+web/.env.local
+
+# Órdenes locales (datos runtime)
+server/storage/orders.json
+
 *.log
 .DS_Store
 Thumbs.db

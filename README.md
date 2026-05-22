@@ -1,89 +1,73 @@
 # ClaudIA Educación Digital
 
-Landing, catálogo por API, carrito y checkout Mercado Pago (Fase 4).
+Landing React/Vite + API Node.js/Express. Catálogo, carrito y checkout Mercado Pago (sandbox).
+
+## Estructura
+
+- `web/` — frontend
+- `server/` — backend (único)
 
 ## Variables de entorno
 
-**Backend** — copiar `api/.env.example` → `api/.env` (no commitear):
+**Backend** — copiar `server/.env.example` → `server/.env` (no commitear):
 
 ```env
+PORT=3000
 APP_URL=http://localhost:5173
-API_URL=http://localhost:8000
 CORS_ORIGINS=http://localhost:5173
+PRODUCTS_PATH=./data/products.json
+ORDERS_PATH=./storage/orders.json
 MP_ACCESS_TOKEN=TU_TOKEN_DE_PRUEBA
 MP_ENV=sandbox
 ```
 
-**Frontend** — copiar `web/.env.example` → `web/.env`:
+**Frontend** — copiar `web/.env.example` → `web/.env` o `web/.env.local`:
 
 ```env
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=http://localhost:3000
 ```
 
-El catálogo y los precios salen solo de `api/data/products.json`.
+Catálogo y precios: `server/data/products.json`. Órdenes: `server/storage/orders.json` (gitignored).
 
 ---
 
-## Fase 4 — Prueba local
+## Desarrollo local
 
-### Backend
+### Backend (Node)
 
 ```bash
-cd C:\proyectos\ClaudIA\api
-pip install -r requirements.txt
-python -m uvicorn main:app --host 127.0.0.1 --port 8000 --log-level debug
+cd server
+npm install
+npm run dev
 ```
 
-Al arrancar debe verse en consola (sin mostrar el token):
+http://127.0.0.1:3000
 
-```
-INFO MP_ACCESS_TOKEN loaded: yes
-INFO APP_URL: http://localhost:5173
-INFO MP_ENV: sandbox
-```
+Health debe responder `"runtime": "node"`.
 
 ### Frontend
 
 ```bash
-cd C:\proyectos\ClaudIA\web
+cd web
+npm install
 npm run dev
 ```
 
 http://localhost:5173
 
-### Health y catálogo
+### Pruebas rápidas
 
 ```bash
-curl.exe -v --max-time 5 http://127.0.0.1:8000/api/health
-curl.exe -v --max-time 5 http://127.0.0.1:8000/api/products
+curl http://127.0.0.1:3000/api/health
+curl http://127.0.0.1:3000/api/products
+curl -X POST http://127.0.0.1:3000/api/webhooks/mercadopago
 ```
 
-### Create-preference (con token en api/.env)
+### Checkout
 
-```bash
-curl.exe -X POST http://127.0.0.1:8000/api/checkout/create-preference ^
-  -H "Content-Type: application/json" ^
-  -d "{\"items\":[{\"productId\":\"geo-tangram-inicial\",\"quantity\":1}]}"
-```
-
-Respuesta esperada: `orderId`, `preferenceId`, `initPoint`.
-
-### Si el puerto 8000 está ocupado
-
-```bash
-netstat -ano | findstr :8000
-taskkill /PID NUMERO_PID /F
-```
-
-### Flujo manual
-
-1. Crear `api/.env` con `MP_ACCESS_TOKEN` de prueba (sandbox).
-2. Reiniciar backend.
-3. Agregar ebook al carrito → **Pagar con Mercado Pago**.
-4. Redirección a Checkout Pro de Mercado Pago.
-5. Al volver: `/gracias?orderId=...&status=...`
-
-Sin `MP_ACCESS_TOKEN` → error: *Mercado Pago no está configurado en el backend*.
+1. `MP_ACCESS_TOKEN` en `server/.env` (sandbox).
+2. Carrito → **Pagar con Mercado Pago** → redirección a Checkout Pro.
+3. Vuelta: `/gracias?orderId=...&status=...`
 
 ---
 
@@ -94,11 +78,11 @@ Sin `MP_ACCESS_TOKEN` → error: *Mercado Pago no está configurado en el backen
 | GET | `/api/health` | Healthcheck |
 | GET | `/api/products` | Catálogo activo |
 | POST | `/api/checkout/create-preference` | Checkout MP |
-
-Pedidos pending: `api/storage/orders.json` (gitignored).
+| POST/GET | `/api/webhooks/mercadopago` | Webhook pagos |
+| GET | `/api/orders/:orderId/status` | Estado del pedido |
 
 ---
 
-## Pendiente Fase 5
+## Pendiente
 
-Webhook MP, confirmación de pago, email, descarga segura de PDFs.
+Email post-pago, descarga segura de PDFs, verificación firma webhook MP en producción.

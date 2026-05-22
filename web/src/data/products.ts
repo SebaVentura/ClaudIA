@@ -1,6 +1,6 @@
 import type { Product } from '../types/product'
 
-/** Fallback local — no se usa si el backend responde. Mantener sincronizado con api/data/products.json */
+/** Fallback local — no se usa si el backend responde. Mantener sincronizado con server/data/products.json */
 export const fallbackProducts: Product[] = [
   {
     id: 'geo-tangram-inicial',
