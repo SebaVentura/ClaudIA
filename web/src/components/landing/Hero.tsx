@@ -1,9 +1,14 @@
+import { useState } from 'react'
 import { Button } from '../ui/Button'
 
 const scrollTo = (id: string) =>
   document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' })
 
+const HERO_CARD_IMAGE = '/landing/claudia-aula-preview.png'
+
 export function Hero() {
+  const [imageFailed, setImageFailed] = useState(false)
+
   return (
     <section
       id="inicio"
@@ -28,21 +33,29 @@ export function Hero() {
             ClaudIA reúne ebooks por nivel: actividades imprimibles, diseño docente y recursos visuales para tu aula.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button variant="primary" onClick={() => scrollTo('#catalogo')}>Ver catálogo</Button>
-            <Button variant="outline" onClick={() => scrollTo('#como-comprar')}>Cómo comprar</Button>
+            <Button variant="primary" onClick={() => scrollTo('#catalogo')}>
+              Ver catálogo
+            </Button>
+            <Button variant="outline" onClick={() => scrollTo('#como-comprar')}>
+              Cómo comprar
+            </Button>
           </div>
         </div>
         <div className="animate-fade-in flex justify-center lg:justify-end [animation-delay:150ms]">
-          <div className="relative w-full max-w-md rounded-3xl border border-claudia-lavender/30 bg-gradient-to-br from-white via-claudia-warm to-claudia-turquoise/15 p-8 shadow-[0_12px_40px_rgba(23,59,99,0.1)]">
-            <p className="text-2xl font-bold text-claudia-ink">📚 Tu aula, en un clic</p>
-            <ul className="mt-4 space-y-2 text-sm text-claudia-muted">
-              <li>✓ PDF listo para imprimir</li>
-              <li>✓ Del nivel Inicial a Superior</li>
-              <li>✓ IA educativa para docentes</li>
-            </ul>
-            <span className="absolute -bottom-4 -right-4 rotate-3 rounded-2xl bg-claudia-navy px-4 py-2 text-sm font-semibold text-white shadow-lg">
-              +6 ebooks
-            </span>
+          <div className="relative w-full max-w-lg min-h-[280px] overflow-hidden rounded-3xl border border-claudia-lavender/30 shadow-[0_12px_40px_rgba(23,59,99,0.1)] sm:min-h-[300px]">
+            {!imageFailed ? (
+              <img
+                src={HERO_CARD_IMAGE}
+                alt="ClaudIA Educación Digital"
+                className="absolute inset-0 h-full w-full object-cover"
+                onError={() => setImageFailed(true)}
+              />
+            ) : (
+              <div
+                className="absolute inset-0 bg-gradient-to-br from-white via-claudia-warm to-claudia-turquoise/15"
+                aria-hidden
+              />
+            )}
           </div>
         </div>
       </div>
