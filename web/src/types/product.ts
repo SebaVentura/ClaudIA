@@ -14,8 +14,13 @@ export interface Product {
   nivel: NivelEducativo
   edad: string
   descripcion: string
+  descripcionLarga: string
   precio: number
   imagen?: string
+  galeria: string[]
+  incluye: string[]
+  paginas?: number
+  audiencia?: string
   badge?: string
 }
 

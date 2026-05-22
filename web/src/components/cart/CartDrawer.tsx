@@ -49,9 +49,9 @@ export function CartDrawer() {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-claudia-ink/30 backdrop-blur-sm" onClick={closeCart} aria-hidden />
+      <div className="fixed inset-0 z-50 bg-claudia-navy/30 backdrop-blur-sm" onClick={closeCart} aria-hidden />
       <aside
-        className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md animate-fade-in flex-col bg-claudia-cream shadow-2xl"
+        className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md animate-fade-in flex-col bg-gradient-to-b from-claudia-warm via-claudia-cream to-white shadow-2xl"
         role="dialog"
         aria-labelledby="cart-title"
         aria-modal="true"
@@ -82,7 +82,7 @@ export function CartDrawer() {
                     <button
                       type="button"
                       onClick={() => removeFromCart(product.id)}
-                      className="shrink-0 text-xs text-claudia-muted hover:text-claudia-coral"
+                      className="shrink-0 text-xs text-claudia-muted hover:text-claudia-rose"
                       aria-label="Quitar del carrito"
                     >
                       Quitar
@@ -112,7 +112,7 @@ export function CartDrawer() {
                         +
                       </button>
                     </div>
-                    <p className="text-sm font-bold text-claudia-coral">
+                    <p className="text-sm font-bold text-claudia-turquoise">
                       {formatPrice(product.precio * quantity)}
                     </p>
                   </div>
@@ -122,7 +122,7 @@ export function CartDrawer() {
           )}
         </div>
 
-        <div className="space-y-3 border-t border-claudia-blush bg-white px-5 py-5">
+        <div className="space-y-3 border-t border-claudia-lavender/25 bg-white/90 px-5 py-5">
           {error && (
             <div role="alert" className="rounded-xl border border-claudia-coral/40 bg-claudia-blush px-4 py-3 text-sm text-claudia-ink">
               {error}
@@ -130,7 +130,7 @@ export function CartDrawer() {
           )}
           <div className="flex justify-between text-lg font-bold">
             <span>Total</span>
-            <span className="text-claudia-coral">{formatPrice(total)}</span>
+            <span className="text-claudia-turquoise">{formatPrice(total)}</span>
           </div>
           <Button
             variant="primary"

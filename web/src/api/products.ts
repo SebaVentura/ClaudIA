@@ -8,10 +8,15 @@ export interface ApiProduct {
   level: string
   age: string
   description: string
+  longDescription?: string
   price: number
   badge: string | null
   active: boolean
   image: string | null
+  gallery?: string[] | null
+  includes?: string[] | null
+  pages?: number | null
+  audience?: string | null
 }
 
 function mapApiProduct(item: ApiProduct): Product {
@@ -21,9 +26,14 @@ function mapApiProduct(item: ApiProduct): Product {
     nivel: item.level as NivelEducativo,
     edad: item.age,
     descripcion: item.description,
+    descripcionLarga: item.longDescription ?? item.description,
     precio: item.price,
     badge: item.badge ?? undefined,
     imagen: item.image ?? undefined,
+    galeria: item.gallery ?? [],
+    incluye: item.includes ?? [],
+    paginas: item.pages ?? undefined,
+    audiencia: item.audience ?? undefined,
   }
 }
 

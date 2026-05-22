@@ -6,13 +6,34 @@
   html {
     scroll-behavior: smooth;
   }
+
   body {
-    @apply font-sans text-claudia-ink antialiased bg-claudia-cream;
+    min-height: 100vh;
+    margin: 0;
+    @apply font-sans antialiased;
+    color: #173b63;
+    background:
+      radial-gradient(circle at 10% 20%, rgba(155, 138, 215, 0.22), transparent 28%),
+      radial-gradient(circle at 90% 10%, rgba(82, 199, 199, 0.2), transparent 30%),
+      radial-gradient(circle at 75% 85%, rgba(233, 138, 165, 0.18), transparent 28%),
+      linear-gradient(135deg, #fff3e8 0%, #fff8f2 50%, #f1f7ff 100%);
+  }
+
+  * {
+    box-sizing: border-box;
   }
 }
 
 @layer utilities {
   .section-anchor {
     scroll-margin-top: 5.5rem;
+  }
+
+  .bg-claudia-page {
+    background:
+      radial-gradient(circle at 10% 20%, rgba(155, 138, 215, 0.22), transparent 28%),
+      radial-gradient(circle at 90% 10%, rgba(82, 199, 199, 0.2), transparent 30%),
+      radial-gradient(circle at 75% 85%, rgba(233, 138, 165, 0.18), transparent 28%),
+      linear-gradient(135deg, #fff3e8 0%, #fff8f2 50%, #f1f7ff 100%);
   }
 }

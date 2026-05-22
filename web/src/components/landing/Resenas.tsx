@@ -6,12 +6,19 @@ const resenas = [
 
 export function Resenas() {
   return (
-    <section id="reseñas" className="section-anchor px-4 py-14 sm:px-6">
-      <div className="mx-auto max-w-6xl">
+    <section
+      id="reseñas"
+      className="section-anchor relative overflow-hidden bg-gradient-to-t from-claudia-turquoise/10 via-claudia-warm to-claudia-lavender/12 px-4 py-14 sm:px-6"
+    >
+      <div className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 rounded-full bg-claudia-rose/10 blur-3xl" aria-hidden />
+      <div className="relative mx-auto max-w-6xl">
         <h2 className="text-center text-3xl font-bold text-claudia-ink">Lo que dicen docentes</h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {resenas.map((r) => (
-            <blockquote key={r.nombre} className="rounded-2xl border-l-4 border-claudia-coral bg-white p-6 shadow-card">
+            <blockquote
+              key={r.nombre}
+              className="rounded-2xl border border-claudia-turquoise/25 border-l-4 border-l-claudia-turquoise bg-white/95 p-6 shadow-[0_8px_24px_rgba(23,59,99,0.08)]"
+            >
               <p className="italic text-claudia-muted">&ldquo;{r.texto}&rdquo;</p>
               <footer className="mt-4">
                 <cite className="not-italic font-semibold text-claudia-ink">{r.nombre}</cite>

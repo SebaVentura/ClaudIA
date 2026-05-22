@@ -8,8 +8,11 @@ export const fallbackProducts: Product[] = [
     nivel: 'Inicial',
     edad: '5 a 7 años',
     descripcion: 'Taller visual, manipulativo y listo para imprimir.',
+    descripcionLarga: 'Taller visual, manipulativo y listo para imprimir.',
     precio: 6600,
     badge: 'Más elegido',
+    galeria: [],
+    incluye: [],
   },
   {
     id: 'division-primaria',
@@ -19,6 +22,10 @@ export const fallbackProducts: Product[] = [
     descripcion:
       'Secuencias didácticas para construir el sentido de la división con repartos y problemas cotidianos.',
     precio: 7200,
+    descripcionLarga:
+      'Secuencias didácticas para construir el sentido de la división con repartos y problemas cotidianos.',
+    galeria: [],
+    incluye: [],
   },
   {
     id: 'cuerpos-geom-tecnica',
@@ -28,6 +35,10 @@ export const fallbackProducts: Product[] = [
     descripcion:
       'Prismas, pirámides y desarrollos planos con fichas imprimibles para taller y geometría.',
     precio: 7800,
+    descripcionLarga:
+      'Prismas, pirámides y desarrollos planos con fichas imprimibles para taller y geometría.',
+    galeria: [],
+    incluye: [],
   },
   {
     id: 'irracionales-secundaria',
@@ -37,6 +48,10 @@ export const fallbackProducts: Product[] = [
     descripcion:
       'Introducción guiada a √2 y π con representaciones, estimación y ejercicios.',
     precio: 7500,
+    descripcionLarga:
+      'Introducción guiada a √2 y π con representaciones, estimación y ejercicios.',
+    galeria: [],
+    incluye: [],
   },
   {
     id: 'taller-logico-superior',
@@ -47,6 +62,10 @@ export const fallbackProducts: Product[] = [
       'Propuestas para formación docente: razonamiento, demostración y diseño de situaciones.',
     precio: 8200,
     badge: 'Formación docente',
+    descripcionLarga:
+      'Propuestas para formación docente: razonamiento, demostración y diseño de situaciones.',
+    galeria: [],
+    incluye: [],
   },
   {
     id: 'ia-primera-experiencia',
@@ -56,6 +75,9 @@ export const fallbackProducts: Product[] = [
     descripcion: 'Guía amable para usar IA en el aula con ética, ejemplos y actividades seguras.',
     precio: 6900,
     badge: 'Nuevo',
+    descripcionLarga: 'Guía amable para usar IA en el aula con ética, ejemplos y actividades seguras.',
+    galeria: [],
+    incluye: [],
   },
 ]
 
