@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { createPreference } from '../../api/checkout'
 import { useCart } from '../../context/CartContext'
+import { openWhatsAppCheckout } from '../../utils/whatsappCheckout'
 import { formatPrice } from '../../utils/formatPrice'
 import { Button } from '../ui/Button'
+
+// TODO Etapa 6: cerrar integración Mercado Pago Checkout + descarga automática
 
 export function CartDrawer() {
   const {
@@ -47,6 +50,11 @@ export function CartDrawer() {
     }
   }
 
+  const handleWhatsApp = () => {
+    if (!cartProducts.length) return
+    openWhatsAppCheckout(cartProducts, total)
+  }
+
   return (
     <>
       <div className="fixed inset-0 z-50 bg-claudia-navy/30 backdrop-blur-sm" onClick={closeCart} aria-hidden />
@@ -57,8 +65,15 @@ export function CartDrawer() {
         aria-modal="true"
       >
         <div className="flex items-center justify-between border-b border-claudia-blush px-5 py-4">
-          <h2 id="cart-title" className="text-lg font-bold">Tu carrito ({itemCount})</h2>
-          <button type="button" onClick={closeCart} className="rounded-full p-2 hover:bg-claudia-blush" aria-label="Cerrar">
+          <h2 id="cart-title" className="text-lg font-bold">
+            Tu carrito ({itemCount})
+          </h2>
+          <button
+            type="button"
+            onClick={closeCart}
+            className="rounded-full p-2 hover:bg-claudia-blush"
+            aria-label="Cerrar"
+          >
             ✕
           </button>
         </div>
@@ -71,7 +86,9 @@ export function CartDrawer() {
               {cartProducts.map(({ product, quantity }) => (
                 <li key={product.id} className="rounded-xl border border-claudia-blush/60 bg-white p-4 shadow-card">
                   <div className="flex gap-3">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-claudia-blush text-2xl">📖</div>
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-claudia-blush text-2xl">
+                      📖
+                    </div>
                     <div className="min-w-0 flex-1">
                       <p className="line-clamp-2 text-sm font-semibold">{product.titulo}</p>
                       <p className="text-xs text-claudia-muted">{product.nivel}</p>
@@ -88,7 +105,7 @@ export function CartDrawer() {
                       Quitar
                     </button>
                   </div>
-                  <div className="mt-3 flex items-center justify-between">
+                  <div className="mt-3 flex items-center justify-between gap-2">
                     <span className="text-xs font-medium text-claudia-muted">Cantidad</span>
                     <div className="flex items-center gap-2">
                       <button
@@ -112,9 +129,12 @@ export function CartDrawer() {
                         +
                       </button>
                     </div>
-                    <p className="text-sm font-bold text-claudia-turquoise">
-                      {formatPrice(product.precio * quantity)}
-                    </p>
+                    <div className="text-right">
+                      <p className="text-xs text-claudia-muted">Subtotal</p>
+                      <p className="text-sm font-bold text-claudia-turquoise">
+                        {formatPrice(product.precio * quantity)}
+                      </p>
+                    </div>
                   </div>
                 </li>
               ))}
@@ -124,7 +144,10 @@ export function CartDrawer() {
 
         <div className="space-y-3 border-t border-claudia-lavender/25 bg-white/90 px-5 py-5">
           {error && (
-            <div role="alert" className="rounded-xl border border-claudia-coral/40 bg-claudia-blush px-4 py-3 text-sm text-claudia-ink">
+            <div
+              role="alert"
+              className="rounded-xl border border-claudia-coral/40 bg-claudia-blush px-4 py-3 text-sm text-claudia-ink"
+            >
               {error}
             </div>
           )}
@@ -139,6 +162,17 @@ export function CartDrawer() {
             onClick={handleCheckout}
           >
             {loading ? 'Redirigiendo a Mercado Pago…' : 'Pagar con Mercado Pago'}
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full"
+            disabled={!cartProducts.length}
+            onClick={handleWhatsApp}
+          >
+            Coordinar compra por WhatsApp
+          </Button>
+          <Button variant="secondary" className="w-full" onClick={closeCart}>
+            Seguir viendo materiales
           </Button>
         </div>
       </aside>

@@ -1,6 +1,7 @@
 import { CatalogSection } from '../components/catalog/CatalogSection'
 import { CartDrawer } from '../components/cart/CartDrawer'
 import { Beneficios } from '../components/landing/Beneficios'
+import { Faq } from '../components/landing/Faq'
 import { ComoFunciona } from '../components/landing/ComoFunciona'
 import { Footer } from '../components/landing/Footer'
 import { Hero } from '../components/landing/Hero'
@@ -24,6 +25,7 @@ export function LandingPage() {
           <CatalogSection />
           <Beneficios />
           <ComoFunciona />
+          <Faq />
           <Resenas />
         </main>
         <Footer />

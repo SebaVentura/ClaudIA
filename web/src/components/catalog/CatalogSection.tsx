@@ -35,8 +35,8 @@ export function CatalogSection() {
             <p className="font-semibold text-claudia-ink">No se pudo cargar el catálogo</p>
             <p className="mt-2 text-sm text-claudia-muted">{error}</p>
             <p className="mt-2 text-sm text-claudia-muted">
-              Asegurate de tener la API en ejecución:{' '}
-              <code className="text-xs">python -m uvicorn main:app --reload --port 8000</code>
+              Asegurate de tener el backend Node en ejecución:{' '}
+              <code className="text-xs">cd server &amp;&amp; npm run dev</code> (puerto 3000)
             </p>
             <button
               type="button"

@@ -133,7 +133,13 @@ export function ProductDetailModal({ product, onClose }: ProductDetailModalProps
             <p className="text-sm text-claudia-muted">{product.edad}</p>
             <p className="mt-3 text-2xl font-bold text-claudia-turquoise">{formatPrice(product.precio)}</p>
 
-            <p className="mt-4 leading-relaxed text-claudia-muted">{product.descripcionLarga}</p>
+            <p className="mt-4 leading-relaxed text-claudia-muted">
+              {product.descripcionLarga || product.descripcion}
+            </p>
+
+            <p className="mt-4 rounded-xl border border-claudia-turquoise/25 bg-claudia-turquoise/10 px-4 py-3 text-sm text-claudia-ink">
+              Material digital listo para descargar, imprimir y usar en el aula.
+            </p>
 
             {product.audiencia && (
               <div className="mt-5 rounded-xl border border-claudia-turquoise/20 bg-claudia-turquoise/10 p-4">
@@ -156,15 +162,16 @@ export function ProductDetailModal({ product, onClose }: ProductDetailModalProps
               </div>
             )}
 
-            <p className="mt-4 text-sm text-claudia-muted">
-              <span className="font-medium text-claudia-ink">Formato:</span> PDF descargable
+            <div className="mt-4 flex flex-wrap gap-3 text-sm text-claudia-muted">
+              <span className="rounded-full bg-claudia-warm px-3 py-1 font-medium text-claudia-navy">
+                Formato: PDF digital
+              </span>
               {product.paginas != null && (
-                <>
-                  {' '}
-                  · <span className="font-medium text-claudia-ink">Páginas:</span> {product.paginas}
-                </>
+                <span className="rounded-full bg-claudia-warm px-3 py-1 font-medium text-claudia-navy">
+                  {product.paginas} páginas
+                </span>
               )}
-            </p>
+            </div>
           </div>
 
           <div className="flex flex-col gap-2 border-t border-claudia-lavender/25 bg-gradient-to-r from-claudia-lavender/10 to-claudia-turquoise/10 px-4 py-4 sm:flex-row sm:px-6">

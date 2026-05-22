@@ -3,6 +3,7 @@
 interface ImportMetaEnv {
   readonly VITE_API_URL: string
   readonly VITE_WHATSAPP_LINK: string
+  readonly VITE_WHATSAPP_NUMBER: string
   readonly VITE_SUPPORT_EMAIL: string
 }
 

@@ -1,8 +1,12 @@
 const steps = [
   { n: '1', title: 'Elegís el ebook', text: 'Explorá el catálogo por nivel y agregá al carrito.' },
-  { n: '2', title: 'Pagás con Mercado Pago', text: 'Checkout seguro (Fase 4).' },
-  { n: '3', title: 'Verificamos el pago', text: 'Confirmación automática del sistema.' },
-  { n: '4', title: 'Recibís por mail', text: 'Enlaces de descarga en tu correo.' },
+  {
+    n: '2',
+    title: 'Pagás con Mercado Pago o coordinás por WhatsApp',
+    text: 'Podés finalizar la compra con checkout seguro de Mercado Pago o coordinar el pago y la entrega digital por WhatsApp.',
+  },
+  { n: '3', title: 'Confirmamos tu pedido', text: 'Verificamos el pago y tu compra.' },
+  { n: '4', title: 'Recibís el material', text: 'Entrega digital en PDF listo para imprimir.' },
 ]
 
 export function ComoFunciona() {

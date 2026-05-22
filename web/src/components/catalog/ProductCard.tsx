@@ -51,6 +51,7 @@ export function ProductCard({ product, onViewDetail }: ProductCardProps) {
         <p className="mt-1 text-xs text-claudia-muted">{product.edad}</p>
         <p className="mt-2 line-clamp-3 flex-1 text-sm text-claudia-muted">{product.descripcion}</p>
         <p className="mt-4 text-xl font-bold text-claudia-turquoise">{formatPrice(product.precio)}</p>
+        <p className="mt-1 text-xs text-claudia-muted">PDF digital · {product.nivel}</p>
         <div className="mt-3 flex flex-col gap-2">
           <Button variant="outline" className="w-full" onClick={() => onViewDetail(product)}>
             Ver detalle

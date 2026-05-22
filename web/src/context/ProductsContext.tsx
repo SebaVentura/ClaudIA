@@ -34,7 +34,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       setError(
         e instanceof Error
           ? e.message
-          : 'No pudimos conectar con el servidor. Verificá que la API esté corriendo en el puerto 8000.',
+          : 'No pudimos conectar con el servidor. Verificá que el backend Node esté corriendo (puerto 3000).',
       )
     } finally {
       setLoading(false)
