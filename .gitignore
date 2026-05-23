@@ -18,3 +18,9 @@ server/storage/orders.json
 *.log
 .DS_Store
 Thumbs.db
+
+# Local frontend env
+web/.env.local
+
+# Local frontend env
+web/.env.local
