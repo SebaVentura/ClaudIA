@@ -11,6 +11,19 @@ interface ProductDetailModalProps {
   onClose: () => void
 }
 
+const GALLERY_SLOT_COUNT = 3
+
+function GalleryPlaceholder() {
+  return (
+    <div
+      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-claudia-blush/80 bg-gradient-to-br from-white via-claudia-cream/80 to-claudia-warm/50 text-xl opacity-50"
+      aria-hidden
+    >
+      📖
+    </div>
+  )
+}
+
 export function ProductDetailModal({ product, onClose }: ProductDetailModalProps) {
   const { addToCart, getQuantity, openCart } = useCart()
   const [mainSrc, setMainSrc] = useState<string | undefined>()
@@ -18,9 +31,16 @@ export function ProductDetailModal({ product, onClose }: ProductDetailModalProps
 
   const thumbs = useMemo(() => {
     if (!product) return []
-    const list = product.galeria.length > 0 ? product.galeria : product.imagen ? [product.imagen] : []
-    return [...new Set(list)]
+    const list =
+      product.galeria.length > 0
+        ? product.galeria
+        : product.imagen
+          ? [product.imagen]
+          : []
+    return [...new Set(list.filter(Boolean))]
   }, [product])
+
+  const showGalleryStrip = thumbs.length > 0
 
   useEffect(() => {
     if (product) {
@@ -45,6 +65,8 @@ export function ProductDetailModal({ product, onClose }: ProductDetailModalProps
   if (!product) return null
 
   const qty = getQuantity(product.id)
+  const placeholderCount =
+    thumbs.length === 1 ? Math.max(0, GALLERY_SLOT_COUNT - 1) : 0
 
   const handleAdd = () => {
     addToCart(product.id)
@@ -83,34 +105,39 @@ export function ProductDetailModal({ product, onClose }: ProductDetailModalProps
 
           <div className="overflow-y-auto px-4 py-5 sm:px-6">
             <div className="overflow-hidden rounded-2xl border border-claudia-blush/60">
-              <div className="aspect-[4/3] w-full bg-claudia-cream">
+              <div className="aspect-[4/3] w-full overflow-hidden">
                 <ProductImage
                   src={mainSrc}
                   alt={product.titulo}
                   nivel={product.nivel}
-                  className="h-full w-full object-cover"
+                  frameClassName="h-full w-full"
                   iconClassName="text-6xl opacity-80"
                 />
               </div>
-              {thumbs.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto border-t border-claudia-blush/60 bg-claudia-cream/50 p-2">
+              {showGalleryStrip && (
+                <div className="flex gap-2 overflow-x-auto border-t border-claudia-blush/60 bg-gradient-to-r from-claudia-warm/40 via-claudia-cream/50 to-white p-2">
                   {thumbs.map((src) => (
                     <button
                       key={src}
                       type="button"
                       onClick={() => setMainSrc(src)}
-                      className={`h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
-                        mainSrc === src ? 'border-claudia-turquoise' : 'border-transparent opacity-70 hover:opacity-100'
+                      className={`flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 transition-colors ${
+                        mainSrc === src
+                          ? 'border-claudia-turquoise bg-white'
+                          : 'border-claudia-blush/60 bg-white/80 opacity-80 hover:opacity-100'
                       }`}
                     >
                       <ProductImage
                         src={src}
                         alt=""
                         nivel={product.nivel}
-                        className="h-full w-full object-cover"
+                        frameClassName="h-full w-full"
                         iconClassName="text-xl"
                       />
                     </button>
+                  ))}
+                  {Array.from({ length: placeholderCount }).map((_, i) => (
+                    <GalleryPlaceholder key={`ph-${i}`} />
                   ))}
                 </div>
               )}

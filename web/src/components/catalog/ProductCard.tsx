@@ -30,12 +30,12 @@ export function ProductCard({ product, onViewDetail }: ProductCardProps) {
 
   return (
     <article className="flex flex-col overflow-hidden rounded-2xl border border-claudia-lavender/35 bg-white/95 shadow-[0_8px_28px_rgba(23,59,99,0.09)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(23,59,99,0.12)]">
-      <div className="relative h-40 overflow-hidden">
+      <div className="relative aspect-[4/3] w-full overflow-hidden border-b border-claudia-blush/50">
         <ProductImage
           src={product.imagen}
           alt={product.titulo}
           nivel={product.nivel}
-          className="h-full w-full object-cover"
+          frameClassName="h-full w-full"
         />
         {product.badge && (
           <span className="absolute right-3 top-3 rounded-full bg-claudia-lavender px-3 py-0.5 text-xs font-bold text-white">
