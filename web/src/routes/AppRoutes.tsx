@@ -8,7 +8,9 @@ import { LandingPage } from '../pages/LandingPage'
 import { AdminCustomersListPage } from '../pages/admin/AdminCustomersListPage'
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from '../pages/admin/AdminLoginPage'
+import { AdminOrderDetailPage } from '../pages/admin/AdminOrderDetailPage'
 import { AdminOrdersListPage } from '../pages/admin/AdminOrdersListPage'
+import { AdminCustomerDetailPage } from '../pages/admin/AdminCustomerDetailPage'
 import { AdminProductFormPage } from '../pages/admin/AdminProductFormPage'
 import { AdminProductsListPage } from '../pages/admin/AdminProductsListPage'
 import { ProtectedRoute } from './ProtectedRoute'
@@ -48,7 +50,9 @@ export function AppRoutes() {
             <Route path="productos/nuevo" element={<AdminProductFormPage />} />
             <Route path="productos/:id/editar" element={<AdminProductFormPage />} />
             <Route path="ordenes" element={<AdminOrdersListPage />} />
+            <Route path="ordenes/:id" element={<AdminOrderDetailPage />} />
             <Route path="clientes" element={<AdminCustomersListPage />} />
+            <Route path="clientes/:id" element={<AdminCustomerDetailPage />} />
           </Route>
         </Route>
       </Route>

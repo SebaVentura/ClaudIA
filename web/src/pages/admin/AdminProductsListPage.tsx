@@ -11,6 +11,8 @@ import { formatPrice } from '../../utils/formatPrice'
 
 type StatusFilter = 'all' | 'active' | 'inactive'
 
+const PAGE_SIZE_OPTIONS = [10, 20, 50] as const
+
 export function AdminProductsListPage() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -23,6 +25,8 @@ export function AdminProductsListPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [actionId, setActionId] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<number>(10)
 
   const loadProducts = useCallback(async () => {
     setLoading(true)
@@ -68,6 +72,25 @@ export function AdminProductsListPage() {
       return haystack.includes(q)
     })
   }, [products, search, statusFilter])
+
+  useEffect(() => {
+    setPage(1)
+  }, [search, statusFilter])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
+  const safePage = Math.min(page, totalPages)
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages)
+  }, [page, totalPages])
+
+  const paginated = useMemo(() => {
+    const start = (safePage - 1) * pageSize
+    return filtered.slice(start, start + pageSize)
+  }, [filtered, safePage, pageSize])
+
+  const rangeStart = filtered.length === 0 ? 0 : (safePage - 1) * pageSize + 1
+  const rangeEnd = Math.min(safePage * pageSize, filtered.length)
 
   const handleToggle = async (product: AdminProduct) => {
     if (actionId) return
@@ -189,7 +212,7 @@ export function AdminProductsListPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-claudia-blush/80">
-              {filtered.map((product) => (
+              {paginated.map((product) => (
                 <tr key={product.id} className="text-claudia-navy">
                   <td className="px-4 py-3">
                     <p className="font-medium">{product.title}</p>
@@ -245,10 +268,51 @@ export function AdminProductsListPage() {
         </div>
       )}
 
-      {!loading && products.length > 0 && (
-        <p className="mt-3 text-xs text-claudia-muted">
-          Mostrando {filtered.length} de {products.length} productos
-        </p>
+      {!loading && filtered.length > 0 && (
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-claudia-muted">
+            Mostrando {rangeStart}–{rangeEnd} de {filtered.length} productos
+            {filtered.length !== products.length && ` (${products.length} en total)`}
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              disabled={safePage <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="rounded-lg border border-claudia-blush px-3 py-1.5 text-sm font-medium text-claudia-navy hover:bg-claudia-warm disabled:opacity-50"
+            >
+              Anterior
+            </button>
+            <span className="text-sm text-claudia-navy">
+              Página {safePage} de {totalPages}
+            </span>
+            <button
+              type="button"
+              disabled={safePage >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              className="rounded-lg border border-claudia-blush px-3 py-1.5 text-sm font-medium text-claudia-navy hover:bg-claudia-warm disabled:opacity-50"
+            >
+              Siguiente
+            </button>
+            <label className="flex items-center gap-2 text-sm text-claudia-muted">
+              Por página
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value))
+                  setPage(1)
+                }}
+                className="rounded-lg border border-claudia-blush px-2 py-1 text-sm text-claudia-navy"
+              >
+                {PAGE_SIZE_OPTIONS.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
       )}
     </section>
   )

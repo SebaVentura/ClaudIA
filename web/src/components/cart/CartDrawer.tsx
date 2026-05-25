@@ -21,15 +21,40 @@ export function CartDrawer() {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [buyerName, setBuyerName] = useState('')
+  const [buyerEmail, setBuyerEmail] = useState('')
+  const [buyerPhone, setBuyerPhone] = useState('')
+  const [buyerFieldError, setBuyerFieldError] = useState<string | null>(null)
 
   useEffect(() => {
     setError(null)
+    setBuyerFieldError(null)
   }, [cartProducts])
 
   if (!isOpen) return null
 
   const handleCheckout = async () => {
     if (!cartProducts.length || loading) return
+
+    const name = buyerName.trim()
+    const email = buyerEmail.trim()
+    const phone = buyerPhone.trim()
+
+    if (!name) {
+      setBuyerFieldError('Ingresá tu nombre para continuar.')
+      return
+    }
+    if (!email) {
+      setBuyerFieldError('Ingresá tu email para continuar.')
+      return
+    }
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    if (!emailOk) {
+      setBuyerFieldError('Ingresá un email válido.')
+      return
+    }
+
+    setBuyerFieldError(null)
     setLoading(true)
     setError(null)
     try {
@@ -38,6 +63,11 @@ export function CartDrawer() {
           productId: product.id,
           quantity,
         })),
+        buyer: {
+          name,
+          email,
+          phone,
+        },
       })
       window.location.href = result.initPoint
     } catch (e) {
@@ -143,6 +173,63 @@ export function CartDrawer() {
         </div>
 
         <div className="space-y-3 border-t border-claudia-lavender/25 bg-white/90 px-5 py-5">
+          {cartProducts.length > 0 && (
+            <div className="rounded-xl border border-claudia-blush/60 bg-claudia-cream/40 p-4">
+              <p className="text-sm font-semibold text-claudia-navy">Datos del comprador</p>
+              <p className="mt-1 text-xs text-claudia-muted">
+                Necesarios para registrar tu compra y el acceso al material.
+              </p>
+              <div className="mt-3 space-y-2">
+                <label className="block">
+                  <span className="text-xs font-medium text-claudia-navy">Nombre *</span>
+                  <input
+                    type="text"
+                    autoComplete="name"
+                    value={buyerName}
+                    onChange={(e) => {
+                      setBuyerName(e.target.value)
+                      setBuyerFieldError(null)
+                    }}
+                    className="mt-1 w-full rounded-lg border border-claudia-blush px-3 py-2 text-sm focus:border-claudia-turquoise focus:outline-none focus:ring-1 focus:ring-claudia-turquoise"
+                    placeholder="Tu nombre"
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-medium text-claudia-navy">Email *</span>
+                  <input
+                    type="email"
+                    autoComplete="email"
+                    value={buyerEmail}
+                    onChange={(e) => {
+                      setBuyerEmail(e.target.value)
+                      setBuyerFieldError(null)
+                    }}
+                    className="mt-1 w-full rounded-lg border border-claudia-blush px-3 py-2 text-sm focus:border-claudia-turquoise focus:outline-none focus:ring-1 focus:ring-claudia-turquoise"
+                    placeholder="tu@email.com"
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-medium text-claudia-navy">Teléfono (opcional)</span>
+                  <input
+                    type="tel"
+                    autoComplete="tel"
+                    value={buyerPhone}
+                    onChange={(e) => {
+                      setBuyerPhone(e.target.value)
+                      setBuyerFieldError(null)
+                    }}
+                    className="mt-1 w-full rounded-lg border border-claudia-blush px-3 py-2 text-sm focus:border-claudia-turquoise focus:outline-none focus:ring-1 focus:ring-claudia-turquoise"
+                    placeholder="291…"
+                  />
+                </label>
+              </div>
+              {buyerFieldError && (
+                <p className="mt-2 text-xs text-claudia-rose" role="alert">
+                  {buyerFieldError}
+                </p>
+              )}
+            </div>
+          )}
           {error && (
             <div
               role="alert"

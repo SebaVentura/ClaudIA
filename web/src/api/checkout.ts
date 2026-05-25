@@ -5,9 +5,15 @@ export interface CheckoutItemPayload {
   quantity: number
 }
 
+export interface CheckoutBuyer {
+  name: string
+  email: string
+  phone: string
+}
+
 export interface CreatePreferencePayload {
   items: CheckoutItemPayload[]
-  buyerEmail?: string
+  buyer: CheckoutBuyer
 }
 
 export interface CreatePreferenceResponse {
