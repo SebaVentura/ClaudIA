@@ -12,6 +12,22 @@ async function parseAdminError(res: Response, fallback: string): Promise<never> 
   throw new Error(detail)
 }
 
+function parseImageField(raw: Record<string, unknown>): string {
+  const value = raw.image ?? raw.coverUrl ?? raw.cover
+  if (value == null) return ''
+  return String(value).trim()
+}
+
+function productFromResponse(data: unknown): Record<string, unknown> {
+  if (!data || typeof data !== 'object') return {}
+  const obj = data as Record<string, unknown>
+  if (obj.product && typeof obj.product === 'object') {
+    return obj.product as Record<string, unknown>
+  }
+  if ('id' in obj || 'title' in obj) return obj
+  return {}
+}
+
 function normalizeProduct(raw: Record<string, unknown>): AdminProduct {
   return {
     id: String(raw.id ?? ''),
@@ -23,7 +39,7 @@ function normalizeProduct(raw: Record<string, unknown>): AdminProduct {
     price: Number(raw.price) || 0,
     badge: raw.badge == null || raw.badge === '' ? null : String(raw.badge),
     active: Boolean(raw.active),
-    image: String(raw.image ?? ''),
+    image: parseImageField(raw),
     gallery: Array.isArray(raw.gallery) ? raw.gallery.map(String) : [],
     includes: Array.isArray(raw.includes) ? raw.includes.map(String) : [],
     pages: Number(raw.pages) || 0,
@@ -57,13 +73,7 @@ export async function getAdminProduct(id: string): Promise<AdminProduct> {
   if (!res.ok) await parseAdminError(res, 'No se pudo cargar el producto')
 
   const data = await res.json()
-  const raw =
-    data && typeof data === 'object' && 'id' in data
-      ? data
-      : data?.product && typeof data.product === 'object'
-        ? data.product
-        : data
-  return normalizeProduct(raw as Record<string, unknown>)
+  return normalizeProduct(productFromResponse(data))
 }
 
 export async function createAdminProduct(
@@ -76,8 +86,7 @@ export async function createAdminProduct(
   if (!res.ok) await parseAdminError(res, 'No se pudo crear el producto')
 
   const data = await res.json()
-  const raw = data?.product ?? data
-  return normalizeProduct(raw as Record<string, unknown>)
+  return normalizeProduct(productFromResponse(data))
 }
 
 export async function updateAdminProduct(
@@ -91,8 +100,7 @@ export async function updateAdminProduct(
   if (!res.ok) await parseAdminError(res, 'No se pudo actualizar el producto')
 
   const data = await res.json()
-  const raw = data?.product ?? data
-  return normalizeProduct(raw as Record<string, unknown>)
+  return normalizeProduct(productFromResponse(data))
 }
 
 export async function toggleAdminProductActive(id: string): Promise<AdminProduct> {
@@ -103,8 +111,7 @@ export async function toggleAdminProductActive(id: string): Promise<AdminProduct
   if (!res.ok) await parseAdminError(res, 'No se pudo cambiar el estado')
 
   const data = await res.json()
-  const raw = data?.product ?? data
-  return normalizeProduct(raw as Record<string, unknown>)
+  return normalizeProduct(productFromResponse(data))
 }
 
 export async function deleteAdminProduct(id: string): Promise<void> {
@@ -112,4 +119,30 @@ export async function deleteAdminProduct(id: string): Promise<void> {
     method: 'DELETE',
   })
   if (!res.ok) await parseAdminError(res, 'No se pudo dar de baja el producto')
+}
+
+export async function uploadAdminProductCover(
+  id: string,
+  file: File,
+): Promise<AdminProduct> {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const res = await adminFetch(
+    `/api/admin/products/${encodeURIComponent(id)}/images/cover`,
+    {
+      method: 'POST',
+      body: formData,
+    },
+  )
+  if (!res.ok) await parseAdminError(res, 'No se pudo subir la portada')
+
+  const data = await res.json()
+  const product = normalizeProduct(productFromResponse(data))
+  if (!product.image) {
+    throw new Error(
+      'La portada se subió pero el servidor no devolvió la URL de imagen. Revisá el backend.',
+    )
+  }
+  return product
 }

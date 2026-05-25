@@ -1,4 +1,11 @@
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const COVER_EXT_RE = /\.(jpe?g|png|webp)$/i
+const COVER_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
+
+export function isAllowedCoverFile(file: File): boolean {
+  if (COVER_MIME.has(file.type)) return true
+  return COVER_EXT_RE.test(file.name)
+}
 
 export function linesToArray(text: string): string[] {
   return text
@@ -26,8 +33,8 @@ export function validateAdminProductForm(
     errors.title = 'El título es obligatorio'
   }
 
-  if (!values.image.trim()) {
-    errors.image = 'La imagen principal es obligatoria'
+  if (values.isNew && !values.image.trim()) {
+    errors.image = 'La imagen principal es obligatoria al crear'
   }
 
   if (!Number.isFinite(values.price) || values.price <= 0) {

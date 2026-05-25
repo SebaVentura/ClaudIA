@@ -1,19 +1,24 @@
-import { FormEvent, useEffect, useState, type ReactNode } from 'react'
+import { FormEvent, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   createAdminProduct,
   getAdminProduct,
   updateAdminProduct,
+  uploadAdminProductCover,
 } from '../../api/adminProducts'
+import { ProductImage } from '../../components/catalog/ProductImage'
 import { AdminApiError } from '../../api/adminClient'
 import type { AdminProduct, DeliveryMode } from '../../types/adminProduct'
 import { emptyAdminProduct } from '../../types/adminProduct'
 import {
   arrayToLines,
+  isAllowedCoverFile,
   linesToArray,
   validateAdminProductForm,
 } from '../../utils/adminProductForm'
 import { formatPrice } from '../../utils/formatPrice'
+
+const COVER_ACCEPT = 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp'
 
 export function AdminProductFormPage() {
   const { id: routeId } = useParams<{ id: string }>()
@@ -28,6 +33,13 @@ export function AdminProductFormPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [coverUploading, setCoverUploading] = useState(false)
+  const [coverError, setCoverError] = useState<string | null>(null)
+  const [coverPreviewKey, setCoverPreviewKey] = useState(0)
+  const coverInputRef = useRef<HTMLInputElement>(null)
+
+  const productIdForUpload = (routeId ?? form.id).trim()
+  const canUploadCover = !isNew && Boolean(productIdForUpload)
 
   useEffect(() => {
     if (isNew) return
@@ -64,6 +76,51 @@ export function AdminProductFormPage() {
       delete next[key as string]
       return next
     })
+  }
+
+  const applyProductToForm = (product: AdminProduct) => {
+    setForm((prev) => ({
+      ...prev,
+      ...product,
+      image: product.image?.trim() ?? '',
+      gallery: Array.isArray(product.gallery) ? product.gallery : [],
+    }))
+    setGalleryText(arrayToLines(product.gallery))
+    setIncludesText(arrayToLines(product.includes))
+    setCoverPreviewKey((k) => k + 1)
+  }
+
+  const coverPreviewSrc = (() => {
+    const url = form.image.trim()
+    if (!url) return null
+    const sep = url.includes('?') ? '&' : '?'
+    return `${url}${sep}v=${coverPreviewKey}`
+  })()
+
+  const handleCoverFile = async (file: File) => {
+    if (!canUploadCover) return
+
+    if (!isAllowedCoverFile(file)) {
+      setCoverError('Formato no válido. Usá JPG, PNG o WebP.')
+      return
+    }
+
+    setCoverUploading(true)
+    setCoverError(null)
+    setSuccess(null)
+    try {
+      const updated = await uploadAdminProductCover(productIdForUpload, file)
+      applyProductToForm(updated)
+      setSuccess('Portada subida correctamente')
+    } catch (err) {
+      setCoverError(err instanceof Error ? err.message : 'No se pudo subir la portada')
+      if (err instanceof AdminApiError && err.status === 401) {
+        navigate('/admin/login', { replace: true })
+      }
+    } finally {
+      setCoverUploading(false)
+      if (coverInputRef.current) coverInputRef.current.value = ''
+    }
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -250,24 +307,72 @@ export function AdminProductFormPage() {
           </FormField>
         </div>
 
-        <FormField label="Imagen principal (ruta) *" error={fieldErrors.image}>
+        <div className="rounded-xl border border-claudia-lavender/30 bg-gradient-to-br from-white via-claudia-cream/40 to-claudia-warm/30 p-4">
+          <h2 className="text-sm font-semibold text-claudia-navy">Portada del producto</h2>
+          <p className="mt-1 text-xs text-claudia-muted">
+            La imagen se guardará en el servidor y reemplazará la portada actual.
+          </p>
+
+          <div className="mt-4 aspect-[4/3] w-full max-w-sm overflow-hidden rounded-xl border border-claudia-blush/60">
+            <ProductImage
+              key={`cover-${coverPreviewKey}-${form.image}`}
+              src={coverPreviewSrc}
+              alt={form.title || 'Portada'}
+              frameClassName="h-full w-full"
+              iconClassName="text-5xl opacity-70"
+            />
+          </div>
+
+          {!canUploadCover ? (
+            <p className="mt-3 text-sm text-claudia-muted">
+              Guardá el producto antes de subir una portada.
+            </p>
+          ) : (
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <input
+                ref={coverInputRef}
+                type="file"
+                accept={COVER_ACCEPT}
+                className="sr-only"
+                aria-hidden
+                disabled={coverUploading}
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) void handleCoverFile(file)
+                }}
+              />
+              <button
+                type="button"
+                disabled={coverUploading}
+                onClick={() => coverInputRef.current?.click()}
+                className="rounded-full bg-claudia-navy px-5 py-2 text-sm font-semibold text-white hover:opacity-95 disabled:opacity-60"
+              >
+                {coverUploading ? 'Subiendo…' : 'Subir portada'}
+              </button>
+              {coverUploading && (
+                <span className="text-sm text-claudia-muted">Guardando en el servidor…</span>
+              )}
+            </div>
+          )}
+
+          {coverError && (
+            <p className="mt-3 rounded-lg bg-claudia-rose/10 px-3 py-2 text-sm text-claudia-rose" role="alert">
+              {coverError}
+            </p>
+          )}
+        </div>
+
+        <FormField label="URL de imagen (portada) *" error={fieldErrors.image}>
           <input
             type="text"
             value={form.image}
             onChange={(e) => updateField('image', e.target.value)}
             className={inputClass(!!fieldErrors.image)}
-            placeholder="/products/mi-producto/cover.jpg"
+            placeholder="/uploads/products/mi-producto/cover.jpg"
           />
-          {form.image.trim() && (
-            <img
-              src={form.image}
-              alt=""
-              className="mt-2 h-24 w-auto rounded-lg border border-claudia-blush object-cover"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-              }}
-            />
-          )}
+          <p className="mt-1 text-xs text-claudia-muted">
+            Se actualiza automáticamente al subir una portada. Podés editarla manualmente si hace falta.
+          </p>
         </FormField>
 
         <FormField label="Galería (una ruta por línea)">

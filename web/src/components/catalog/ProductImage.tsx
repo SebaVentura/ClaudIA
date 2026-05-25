@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { nivelGradient } from '../../theme/colors'
 
 interface ProductImageProps {
@@ -27,7 +27,12 @@ export function ProductImage({
   iconClassName = 'text-5xl opacity-80',
 }: ProductImageProps) {
   const [failed, setFailed] = useState(false)
-  const showFallback = !src || failed
+
+  useEffect(() => {
+    setFailed(false)
+  }, [src])
+
+  const showFallback = !src?.trim() || failed
   const gradient = nivel
     ? (nivelGradient[nivel] ?? 'from-claudia-blush/40 to-white')
     : 'from-claudia-blush/40 to-white'
@@ -46,12 +51,14 @@ export function ProductImage({
     )
   }
 
+  const imageSrc = src!.trim()
+
   return (
     <div
       className={`flex items-center justify-center overflow-hidden ${frameBg} ${frameClassName}`}
     >
       <img
-        src={src}
+        src={imageSrc}
         alt={alt}
         className={imgClassName}
         onError={() => setFailed(true)}
