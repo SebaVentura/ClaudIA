@@ -18,6 +18,20 @@ export function arrayToLines(items: string[]): string {
   return items.join('\n')
 }
 
+export const GALLERY_SLOT_COUNT = 3
+
+export function gallerySlotsFromProduct(gallery: string[] | undefined): string[] {
+  const slots = Array.isArray(gallery) ? gallery.map((u) => String(u).trim()) : []
+  return [0, 1, 2].map((i) => slots[i] ?? '')
+}
+
+export function gallerySlotsToPayload(slots: string[]): string[] {
+  return slots
+    .slice(0, GALLERY_SLOT_COUNT)
+    .map((u) => u.trim())
+    .filter(Boolean)
+}
+
 export function validateAdminProductForm(
   values: {
     id: string

@@ -121,6 +121,27 @@ export async function deleteAdminProduct(id: string): Promise<void> {
   if (!res.ok) await parseAdminError(res, 'No se pudo dar de baja el producto')
 }
 
+export async function uploadAdminProductGallerySlot(
+  id: string,
+  slot: 0 | 1 | 2,
+  file: File,
+): Promise<AdminProduct> {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const res = await adminFetch(
+    `/api/admin/products/${encodeURIComponent(id)}/images/gallery/${slot}`,
+    {
+      method: 'POST',
+      body: formData,
+    },
+  )
+  if (!res.ok) await parseAdminError(res, 'No se pudo subir la imagen de detalle')
+
+  const data = await res.json()
+  return normalizeProduct(productFromResponse(data))
+}
+
 export async function uploadAdminProductCover(
   id: string,
   file: File,

@@ -5,6 +5,7 @@ import {
   getAdminProduct,
   updateAdminProduct,
   uploadAdminProductCover,
+  uploadAdminProductGallerySlot,
 } from '../../api/adminProducts'
 import { ProductImage } from '../../components/catalog/ProductImage'
 import { AdminApiError } from '../../api/adminClient'
@@ -12,6 +13,9 @@ import type { AdminProduct, DeliveryMode } from '../../types/adminProduct'
 import { emptyAdminProduct } from '../../types/adminProduct'
 import {
   arrayToLines,
+  gallerySlotsFromProduct,
+  gallerySlotsToPayload,
+  GALLERY_SLOT_COUNT,
   isAllowedCoverFile,
   linesToArray,
   validateAdminProductForm,
@@ -26,7 +30,6 @@ export function AdminProductFormPage() {
   const navigate = useNavigate()
 
   const [form, setForm] = useState<AdminProduct>(() => emptyAdminProduct())
-  const [galleryText, setGalleryText] = useState('')
   const [includesText, setIncludesText] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(!isNew)
@@ -37,6 +40,10 @@ export function AdminProductFormPage() {
   const [coverError, setCoverError] = useState<string | null>(null)
   const [coverPreviewKey, setCoverPreviewKey] = useState(0)
   const coverInputRef = useRef<HTMLInputElement>(null)
+  const galleryInputRefs = useRef<(HTMLInputElement | null)[]>([])
+  const [galleryUploading, setGalleryUploading] = useState<Record<number, boolean>>({})
+  const [galleryErrors, setGalleryErrors] = useState<Record<number, string | null>>({})
+  const [galleryPreviewKeys, setGalleryPreviewKeys] = useState<Record<number, number>>({})
 
   const productIdForUpload = (routeId ?? form.id).trim()
   const canUploadCover = !isNew && Boolean(productIdForUpload)
@@ -51,7 +58,6 @@ export function AdminProductFormPage() {
         const product = await getAdminProduct(routeId!)
         if (cancelled) return
         setForm(product)
-        setGalleryText(arrayToLines(product.gallery))
         setIncludesText(arrayToLines(product.includes))
       } catch (e) {
         if (!cancelled) {
@@ -83,10 +89,10 @@ export function AdminProductFormPage() {
       ...prev,
       ...product,
       image: product.image?.trim() ?? '',
-      gallery: Array.isArray(product.gallery) ? product.gallery : [],
+      gallery: gallerySlotsFromProduct(product.gallery),
     }))
-    setGalleryText(arrayToLines(product.gallery))
     setIncludesText(arrayToLines(product.includes))
+    setGalleryPreviewKeys({})
     setCoverPreviewKey((k) => k + 1)
   }
 
@@ -96,6 +102,47 @@ export function AdminProductFormPage() {
     const sep = url.includes('?') ? '&' : '?'
     return `${url}${sep}v=${coverPreviewKey}`
   })()
+
+  const handleGalleryFile = async (slot: 0 | 1 | 2, file: File) => {
+    if (!canUploadCover) return
+
+    if (!isAllowedCoverFile(file)) {
+      setGalleryErrors((prev) => ({
+        ...prev,
+        [slot]: 'Formato no válido. Usá JPG, PNG o WebP.',
+      }))
+      return
+    }
+
+    setGalleryUploading((prev) => ({ ...prev, [slot]: true }))
+    setGalleryErrors((prev) => ({ ...prev, [slot]: null }))
+    setSuccess(null)
+    try {
+      const updated = await uploadAdminProductGallerySlot(productIdForUpload, slot, file)
+      applyProductToForm(updated)
+      setGalleryPreviewKeys((prev) => ({ ...prev, [slot]: (prev[slot] ?? 0) + 1 }))
+      setSuccess(`Imagen de detalle ${slot + 1} subida correctamente`)
+    } catch (err) {
+      setGalleryErrors((prev) => ({
+        ...prev,
+        [slot]: err instanceof Error ? err.message : 'No se pudo subir la imagen',
+      }))
+      if (err instanceof AdminApiError && err.status === 401) {
+        navigate('/admin/login', { replace: true })
+      }
+    } finally {
+      setGalleryUploading((prev) => ({ ...prev, [slot]: false }))
+      const input = galleryInputRefs.current[slot]
+      if (input) input.value = ''
+    }
+  }
+
+  const galleryPreviewSrc = (slot: number) => {
+    const url = (Array.isArray(form.gallery) ? form.gallery[slot] : '')?.trim()
+    if (!url) return null
+    const sep = url.includes('?') ? '&' : '?'
+    return `${url}${sep}v=${galleryPreviewKeys[slot] ?? 0}`
+  }
 
   const handleCoverFile = async (file: File) => {
     if (!canUploadCover) return
@@ -146,7 +193,9 @@ export function AdminProductFormPage() {
       badge: form.badge?.trim() || null,
       active: form.active,
       image: form.image.trim(),
-      gallery: linesToArray(galleryText),
+      gallery: gallerySlotsToPayload(
+        Array.isArray(form.gallery) ? form.gallery : gallerySlotsFromProduct([]),
+      ),
       includes: linesToArray(includesText),
       pages: form.pages || 0,
       audience: form.audience.trim(),
@@ -375,15 +424,72 @@ export function AdminProductFormPage() {
           </p>
         </FormField>
 
-        <FormField label="Galería (una ruta por línea)">
-          <textarea
-            value={galleryText}
-            onChange={(e) => setGalleryText(e.target.value)}
-            rows={3}
-            className={inputClass()}
-            placeholder="/products/.../page-1.jpg"
-          />
-        </FormField>
+        <div className="rounded-xl border border-claudia-lavender/30 bg-gradient-to-br from-white via-claudia-cream/40 to-claudia-warm/30 p-4">
+          <h2 className="text-sm font-semibold text-claudia-navy">Imágenes de detalle</h2>
+          <p className="mt-1 text-xs text-claudia-muted">
+            Hasta 3 imágenes para el detalle del producto. Independientes de la portada.
+          </p>
+
+          {!canUploadCover ? (
+            <p className="mt-3 text-sm text-claudia-muted">
+              Guardá el producto antes de subir imágenes de detalle.
+            </p>
+          ) : (
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+              {Array.from({ length: GALLERY_SLOT_COUNT }, (_, slot) => {
+                const src = galleryPreviewSrc(slot)
+                const uploading = Boolean(galleryUploading[slot])
+                const slotError = galleryErrors[slot]
+                return (
+                  <div
+                    key={slot}
+                    className="rounded-lg border border-claudia-blush/60 bg-white/80 p-3"
+                  >
+                    <p className="text-xs font-medium text-claudia-navy">
+                      Imagen detalle {slot + 1}
+                    </p>
+                    <div className="mt-2 aspect-[4/3] w-full overflow-hidden rounded-lg border border-claudia-blush/50">
+                      <ProductImage
+                        key={`gallery-${slot}-${src ?? 'empty'}-${galleryPreviewKeys[slot] ?? 0}`}
+                        src={src}
+                        alt={`Detalle ${slot + 1}`}
+                        frameClassName="h-full w-full"
+                        iconClassName="text-3xl opacity-60"
+                      />
+                    </div>
+                    <input
+                      ref={(el) => {
+                        galleryInputRefs.current[slot] = el
+                      }}
+                      type="file"
+                      accept={COVER_ACCEPT}
+                      className="sr-only"
+                      aria-hidden
+                      disabled={uploading}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) void handleGalleryFile(slot as 0 | 1 | 2, file)
+                      }}
+                    />
+                    <button
+                      type="button"
+                      disabled={uploading}
+                      onClick={() => galleryInputRefs.current[slot]?.click()}
+                      className="mt-3 w-full rounded-full border border-claudia-navy/30 px-3 py-1.5 text-xs font-semibold text-claudia-navy hover:bg-claudia-warm disabled:opacity-60"
+                    >
+                      {uploading ? 'Subiendo…' : src ? 'Reemplazar' : 'Subir'}
+                    </button>
+                    {slotError && (
+                      <p className="mt-2 text-xs text-claudia-rose" role="alert">
+                        {slotError}
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
 
         <FormField label="Incluye (un ítem por línea)">
           <textarea
