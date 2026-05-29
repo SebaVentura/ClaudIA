@@ -1,7 +1,5 @@
 import { Logo } from '../layout/Logo'
-
-const email = import.meta.env.VITE_SUPPORT_EMAIL ?? 'contacto@claudia.edu.ar'
-const whatsapp = import.meta.env.VITE_WHATSAPP_LINK ?? 'https://wa.me/5490000000000'
+import { SUPPORT_EMAIL, WHATSAPP_DISPLAY, WHATSAPP_URL } from '../../config/contact'
 
 export function Footer() {
   return (
@@ -13,10 +11,19 @@ export function Footer() {
         <div>
           <h3 className="font-semibold text-white">Contacto</h3>
           <ul className="mt-3 space-y-2 text-sm opacity-90">
-            <li><a href={`mailto:${email}`} className="hover:text-claudia-turquoise">{email}</a></li>
             <li>
-              <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="hover:text-claudia-turquoise">
-                WhatsApp
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-claudia-turquoise">
+                {SUPPORT_EMAIL}
+              </a>
+            </li>
+            <li>
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-claudia-turquoise"
+              >
+                WhatsApp · {WHATSAPP_DISPLAY}
               </a>
             </li>
           </ul>
@@ -26,6 +33,9 @@ export function Footer() {
           <p className="mt-2 text-xs opacity-60">Todos los derechos reservados.</p>
         </div>
       </div>
+      <p className="mx-auto mt-10 max-w-6xl border-t border-white/10 pt-6 text-center text-xs tracking-wide text-claudia-cream/45">
+        Sitio desarrollado por SV Data Lab
+      </p>
     </footer>
   )
 }
