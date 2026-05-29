@@ -82,9 +82,13 @@ export function AdminDashboardPage() {
 
           <SalesTrendChart points={data.salesByDay} />
 
-          <div className="grid gap-6 xl:grid-cols-2">
-            <TopProductsTable rows={data.topProducts} />
-            <RecentOrdersTable rows={data.recentOrders} />
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-5">
+            <div className="min-w-0 xl:col-span-2">
+              <TopProductsTable rows={data.topProducts} />
+            </div>
+            <div className="min-w-0 xl:col-span-3">
+              <RecentOrdersTable rows={data.recentOrders} />
+            </div>
           </div>
 
           <InsightsPanel insights={data.insights} />

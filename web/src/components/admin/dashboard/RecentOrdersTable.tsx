@@ -22,38 +22,38 @@ export function RecentOrdersTable({ rows }: RecentOrdersTableProps) {
       {rows.length === 0 ? (
         <p className="mt-3 text-sm text-claudia-muted">No hay órdenes recientes para mostrar.</p>
       ) : (
-        <div className="mt-3 -mx-1 overflow-x-auto px-2 pb-1">
-          <table className="w-full min-w-[40rem] text-left text-sm">
+        <div className="mt-3 -mx-1 overflow-x-auto px-2 pb-1 xl:mx-0 xl:overflow-x-visible xl:px-0">
+          <table className="w-full min-w-[30rem] text-left text-sm xl:min-w-0">
             <thead>
               <tr className="border-b border-claudia-blush/60 text-xs uppercase tracking-wide text-claudia-muted">
-                <th className="whitespace-nowrap py-2.5 pl-3 pr-3">Fecha</th>
-                <th className="whitespace-nowrap py-2.5 pl-3 pr-3">Cliente</th>
-                <th className="whitespace-nowrap py-2.5 pl-3 pr-3">Estado</th>
-                <th className="whitespace-nowrap py-2.5 pl-3 pr-3 text-right">Total</th>
-                <th className="whitespace-nowrap py-2.5 pl-4 pr-5 text-right">Acción</th>
+                <th className="whitespace-nowrap py-2.5 pl-2 pr-2 xl:pl-3 xl:pr-3">Fecha</th>
+                <th className="py-2.5 pl-2 pr-2 xl:pl-3 xl:pr-3">Cliente</th>
+                <th className="whitespace-nowrap py-2.5 pl-2 pr-2 xl:pl-3 xl:pr-3">Estado</th>
+                <th className="whitespace-nowrap py-2.5 pl-2 pr-4 text-right xl:pl-3">Total</th>
+                <th className="whitespace-nowrap py-2.5 pl-2 pr-6 text-right xl:pl-3 xl:pr-8">Acción</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => (
                 <tr key={row.orderId} className="border-b border-claudia-blush/30 last:border-b-0">
-                  <td className="whitespace-nowrap py-2.5 pl-3 pr-3 text-claudia-muted">
+                  <td className="whitespace-nowrap py-2.5 pl-2 pr-2 text-claudia-muted xl:pl-3 xl:pr-3">
                     {formatAdminDate(row.createdAt)}
                   </td>
-                  <td className="max-w-[12rem] py-2.5 pl-3 pr-3 text-claudia-navy">
-                    <span className="line-clamp-2">{row.customerName || row.customerEmail || 'Sin datos'}</span>
+                  <td className="max-w-[10rem] py-2.5 pl-2 pr-2 text-claudia-navy sm:max-w-[12rem] xl:max-w-none xl:pl-3 xl:pr-3">
+                    <span className="line-clamp-2 break-words">{row.customerName || row.customerEmail || 'Sin datos'}</span>
                   </td>
-                  <td className="whitespace-nowrap py-2.5 pl-3 pr-3">
+                  <td className="whitespace-nowrap py-2.5 pl-2 pr-2 xl:pl-3 xl:pr-3">
                     <span className={`rounded-full px-2 py-1 text-xs ${orderStatusBadgeClass(row.status)}`}>
                       {orderStatusLabel(row.status)}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap py-2.5 pl-3 pr-3 text-right font-medium text-claudia-navy">
+                  <td className="whitespace-nowrap py-2.5 pl-2 pr-4 text-right font-medium text-claudia-navy xl:pl-3">
                     {formatPrice(row.total)}
                   </td>
-                  <td className="whitespace-nowrap py-2.5 pl-4 pr-5 text-right">
+                  <td className="whitespace-nowrap py-2.5 pl-2 pr-6 text-right xl:pl-3 xl:pr-8">
                     <Link
                       to={`/admin/ordenes/${encodeURIComponent(row.orderId)}`}
-                      className="inline-block text-xs font-medium text-claudia-turquoise hover:underline"
+                      className="inline-block rounded-md px-1.5 py-0.5 text-xs font-medium text-claudia-turquoise hover:bg-claudia-cream/80 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-claudia-turquoise"
                     >
                       Ver
                     </Link>

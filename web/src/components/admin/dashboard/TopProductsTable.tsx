@@ -13,13 +13,13 @@ interface TopProductsTableProps {
 
 export function TopProductsTable({ rows }: TopProductsTableProps) {
   return (
-    <section className="rounded-xl border border-claudia-lavender/30 bg-white/90 p-4 shadow-card">
+    <section className="h-full rounded-xl border border-claudia-lavender/30 bg-white/90 p-4 shadow-card">
       <h3 className="text-sm font-semibold text-claudia-navy">Productos más vendidos</h3>
       {rows.length === 0 ? (
         <p className="mt-3 text-sm text-claudia-muted">Sin ventas en este período.</p>
       ) : (
-        <div className="mt-3 min-h-[10rem] overflow-x-auto px-1">
-          <table className="w-full min-w-[20rem] text-left text-sm">
+        <div className="mt-3 overflow-x-auto px-1 xl:overflow-visible">
+          <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-claudia-blush/60 text-xs uppercase tracking-wide text-claudia-muted">
                 <th className="py-2.5 pl-3 pr-3">Producto</th>

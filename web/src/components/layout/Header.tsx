@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
 import { Logo } from './Logo'
 
@@ -15,7 +16,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-claudia-lavender/25 bg-claudia-warm/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Logo />
-        <nav className="hidden md:flex gap-6" aria-label="Principal">
+        <nav className="hidden items-center gap-6 md:flex" aria-label="Principal">
           {links.map((l) => (
             <a
               key={l.href}
@@ -25,7 +26,19 @@ export function Header() {
               {l.label}
             </a>
           ))}
+          <Link
+            to="/admin/login"
+            className="rounded-lg border border-claudia-lavender/45 bg-claudia-cream/90 px-3 py-1.5 text-xs font-semibold tracking-wide text-claudia-navy shadow-card transition hover:border-claudia-turquoise hover:text-claudia-turquoise focus:outline-none focus-visible:ring-2 focus-visible:ring-claudia-turquoise focus-visible:ring-offset-2"
+          >
+            ADMIN
+          </Link>
         </nav>
+        <Link
+          to="/admin/login"
+          className="rounded-lg border border-claudia-lavender/45 bg-claudia-cream/90 px-2.5 py-1.5 text-xs font-semibold tracking-wide text-claudia-navy shadow-card transition hover:border-claudia-turquoise hover:text-claudia-turquoise focus:outline-none focus-visible:ring-2 focus-visible:ring-claudia-turquoise focus-visible:ring-offset-2 md:hidden"
+        >
+          ADMIN
+        </Link>
         <button
           type="button"
           onClick={toggleCart}
